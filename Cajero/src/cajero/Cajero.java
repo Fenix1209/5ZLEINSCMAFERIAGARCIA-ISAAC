@@ -9,6 +9,7 @@ package cajero;
  * @author gaep6
  */
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -17,9 +18,9 @@ public class Cajero {
 
     private int saldo;
     private String contraseña;
-    private ArrayList<String> movimientos; // Lista para almacenar los movimientos
+    private ArrayList<String> movimientos;
+    private String nombreIntegrante = "Integrante: Feria Garcia Isaac";  // Nombre del integrante
 
-    // Constructor para inicializar los valores desde el archivo
     public Cajero() {
         movimientos = new ArrayList<>();
         cargarDatos();
@@ -30,10 +31,12 @@ public class Cajero {
         cajero.mostrarMenu();
     }
 
-    // Método para mostrar el menú principal
     public void mostrarMenu(){
         JFrame frame = new JFrame("Cajero Automático");
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new BorderLayout());
+
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -45,12 +48,12 @@ public class Cajero {
 
         int opcion = 0;
         do{
-            String cadena = JOptionPane.showInputDialog(null,""
+            String cadena = JOptionPane.showInputDialog(null, nombreIntegrante + "\n\n"  // Mostrar el nombre en el menú
                     + "1. Consultar saldo\n"
                     + "2. Depositar\n"
                     + "3. Retirar\n"
                     + "4. Cambiar clave\n"
-                    + "5. Movimientos\n"  // Nueva opción para mostrar los movimientos
+                    + "5. Movimientos\n"
                     + "6. Salir");
 
             if(cadena != null && ValidacionNumero.isNum(cadena)){
@@ -72,7 +75,7 @@ public class Cajero {
                         cambiarClave();
                         break;
 
-                    case 5: // Llama al método mostrarMovimientos cuando se selecciona la opción 5
+                    case 5:
                         mostrarMovimientos();
                         break;
 
@@ -89,7 +92,6 @@ public class Cajero {
         } while(opcion != 6);
     }
 
-    // Método para depositar
     public void depositar(){
         String cadena;
         int deposito = 0;
@@ -109,13 +111,11 @@ public class Cajero {
         }
     }
 
-    // Método para retirar
     public void retirar(){
         String cadena;
         cadena = JOptionPane.showInputDialog(null,"Digite su clave: ");
 
         if(cadena == null){
-            // vuelve a la ventana de inicio
         }else{
             if(!cadena.equals("")){
                 if(cadena.equals(contraseña)){
@@ -180,7 +180,6 @@ public class Cajero {
         }
     }
 
-    // Método para cambiar clave
     public void cambiarClave(){
         String auxiliar;
         String contraseñaNueva;
@@ -211,12 +210,10 @@ public class Cajero {
         }
     }
 
-    // Método para consultar saldo
     public void consultarSaldo(){
         JOptionPane.showMessageDialog(null,"Su saldo actual es: " + saldo);
     }
 
-    // Método para mostrar los movimientos en forma de lista
     public void mostrarMovimientos(){
         if(movimientos.isEmpty()){
             JOptionPane.showMessageDialog(null,"No hay movimientos para mostrar");
@@ -228,25 +225,22 @@ public class Cajero {
         }
     }
 
-    // Método para guardar datos
     private void guardarDatos() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("datos.dat"))) {
             oos.writeObject(contraseña);
             oos.writeInt(saldo);
-            oos.writeObject(movimientos); // Guardar los movimientos
+            oos.writeObject(movimientos);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Método para cargar datos
     private void cargarDatos() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("datos.dat"))) {
             contraseña = (String) ois.readObject();
             saldo = ois.readInt();
-            movimientos = (ArrayList<String>) ois.readObject(); // Cargar los movimientos
+            movimientos = (ArrayList<String>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            // Si no se puede leer el archivo, inicializamos los valores por defecto
             saldo = 900000;
             contraseña = "holamundo";
             movimientos = new ArrayList<>();
@@ -254,7 +248,6 @@ public class Cajero {
     }
 }
 
-// Clase para validar números (implementación básica)
 class ValidacionNumero {
     public static boolean isNum(String cadena) {
         try {
@@ -265,3 +258,4 @@ class ValidacionNumero {
         }
     }
 }
+
